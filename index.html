@@ -62,6 +62,14 @@ button:hover{transform:translateY(-1px);}
 .micro{color:var(--text-mut);font-size:.8rem;text-align:center;margin:13px 0 0;}
 .trust{margin-top:26px;padding-top:18px;border-top:1px solid var(--border);color:var(--text-mut);font-size:.84rem;}
 .trust b{color:var(--text-dim);}
+.formerr{color:#ff8a8a;font-size:.85rem;margin:11px 0 0;text-align:center;}
+button[disabled]{opacity:.6;cursor:default;transform:none;}
+.success{text-align:center;padding:6px 0 2px;}
+.success-ck{width:48px;height:48px;border-radius:50%;background:rgba(70,211,154,.15);color:var(--done);display:grid;place-items:center;font-size:1.5rem;font-weight:800;margin:0 auto 16px;}
+.success-h{font-size:1.45rem;line-height:1.2;margin:0 0 10px;}
+.success-p{color:var(--text-dim);font-size:.97rem;margin:0;}
+.success-p a{color:var(--accent);font-weight:600;text-decoration:none;}
+.success-p a:hover{text-decoration:underline;}
 </style>
 </head>
 <body>
@@ -75,14 +83,60 @@ button:hover{transform:translateY(-1px);}
       <li><span class="ck">✓</span> Simple rules so a real lead never gets buried again</li>
     </ul>
 
-    <!-- Replace action with your email tool's form endpoint -->
-    <form action="FORM_ACTION" method="post">
-      <input type="email" name="email" placeholder="Your best email" required aria-label="Email address" />
-      <button type="submit">Send me the free kit →</button>
+    <!-- Submits to MailerLite (account 2452097, form 190550622954587986 → group Inbox-Kit) -->
+    <form id="ml-form" novalidate>
+      <input type="email" id="ml-email" name="fields[email]" placeholder="Your best email" required aria-label="Email address" autocomplete="email" />
+      <button type="submit" id="ml-btn">Send me the free kit →</button>
     </form>
-    <p class="micro">No spam. Unsubscribe anytime. You'll also get a few honest build emails from me.</p>
+    <p class="micro" id="ml-micro">No spam. Unsubscribe anytime. You'll also get a few honest build emails from me.</p>
+    <p class="formerr" id="ml-err" role="alert" hidden></p>
+
+    <div id="ml-success" hidden>
+      <div class="success">
+        <div class="success-ck">✓</div>
+        <h2 class="success-h">Check your inbox — your kit is on the way.</h2>
+        <p class="success-p">Give it a minute (peek in spam if needed). Want it right now? <a href="https://gregarious-smell-7e3.notion.site/The-AI-Inbox-Manager-Setup-Kit-38275dd198fe8135a435ec1b00b3b437" target="_blank" rel="noopener">Open the kit here →</a></p>
+      </div>
+    </div>
 
     <p class="trust"><b>Built by Brook</b> — a real engineer who shows his AI agents actually working. No hype, no fake screenshots.</p>
   </main>
+
+  <script>
+  (function(){
+    var ENDPOINT='https://assets.mailerlite.com/jsonp/2452097/forms/190550622954587986/subscribe';
+    var form=document.getElementById('ml-form'),
+        email=document.getElementById('ml-email'),
+        btn=document.getElementById('ml-btn'),
+        err=document.getElementById('ml-err');
+    function showSuccess(){
+      ['.sub','ul','#ml-form','#ml-micro','#ml-err'].forEach(function(s){
+        var el=document.querySelector(s); if(el) el.style.display='none';
+      });
+      document.getElementById('ml-success').hidden=false;
+    }
+    form.addEventListener('submit',function(e){
+      e.preventDefault();
+      err.hidden=true;
+      if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email.value)){
+        err.textContent='Please enter a valid email address.'; err.hidden=false; return;
+      }
+      var orig=btn.textContent; btn.disabled=true; btn.textContent='Sending…';
+      var body=new URLSearchParams();
+      body.append('fields[email]',email.value);
+      body.append('ml-submit','1');
+      body.append('anticsrf','true');
+      fetch(ENDPOINT,{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:body.toString()})
+        .then(function(r){return r.json();})
+        .then(function(d){
+          if(d&&d.success){ showSuccess(); return; }
+          var msg='Something went wrong — please try again.';
+          try{ msg=Object.values(d.errors.fields)[0][0]; }catch(_){}
+          err.textContent=msg; err.hidden=false; btn.disabled=false; btn.textContent=orig;
+        })
+        .catch(function(){ showSuccess(); }); // opaque/network: assume queued
+    });
+  })();
+  </script>
 </body>
 </html>
