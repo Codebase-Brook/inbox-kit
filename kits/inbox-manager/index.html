@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Free AI Inbox Manager Setup Kit — Brook</title>
+<!--
+  Optional self-hosted opt-in page (matches the Brook OS design language).
+  Use this ONLY if you want your own page instead of the email tool's built-in one.
+  To make it capture emails: replace FORM_ACTION below with your email tool's
+  form endpoint (MailerLite / Kit / Beehiiv embed action), keep the email input's
+  name as the tool expects (often "fields[email]" or "email"). The tool then runs
+  the 3-email automation. Host free on Netlify / GitHub Pages / Cloudflare Pages.
+-->
+<style>
+:root{
+  --bg:#0b0e14; --surface:#151b27; --surface-2:#1c2533; --border:#263041; --border-2:#34425a;
+  --text:#e8edf6; --text-dim:#97a3b6; --text-mut:#6b7689;
+  --accent:#6ea8fe; --grad:linear-gradient(135deg,#6ea8fe 0%,#8b7bff 55%,#c084fc 100%);
+  --done:#46d39a; --r:14px; --r-lg:22px;
+  --font:-apple-system,BlinkMacSystemFont,"Segoe UI","Inter",Roboto,Helvetica,Arial,sans-serif;
+}
+*{box-sizing:border-box;}
+html,body{margin:0;background:var(--bg);color:var(--text);font-family:var(--font);line-height:1.55;-webkit-font-smoothing:antialiased;}
+body{
+  min-height:100vh; display:grid; place-items:center; padding:32px 18px;
+  background:
+    radial-gradient(900px 520px at 15% -10%, rgba(110,168,254,.14), transparent 60%),
+    radial-gradient(800px 520px at 100% 0%, rgba(192,132,252,.10), transparent 55%),
+    var(--bg);
+}
+.card{
+  width:100%; max-width:560px; background:var(--surface);
+  border:1px solid var(--border-2); border-radius:var(--r-lg);
+  padding:38px 36px; box-shadow:0 20px 60px rgba(0,0,0,.45); position:relative; overflow:hidden;
+}
+.card::after{content:"";position:absolute;right:-70px;top:-70px;width:240px;height:240px;border-radius:50%;
+  background:radial-gradient(circle,rgba(139,123,255,.22),transparent 70%);}
+.eyebrow{display:inline-flex;align-items:center;gap:8px;font-size:.7rem;font-weight:700;letter-spacing:.16em;
+  text-transform:uppercase;color:var(--accent);background:rgba(110,168,254,.12);
+  border:1px solid var(--border-2);padding:5px 11px;border-radius:999px;}
+h1{font-size:2rem;line-height:1.12;letter-spacing:-.02em;margin:16px 0 12px;}
+.sub{color:var(--text-dim);font-size:1.02rem;margin:0 0 22px;}
+.sub b{color:var(--text);}
+ul{list-style:none;padding:0;margin:0 0 26px;display:grid;gap:11px;}
+li{display:flex;gap:11px;align-items:flex-start;color:var(--text-dim);font-size:.96rem;}
+li .ck{flex:none;width:20px;height:20px;border-radius:6px;background:rgba(70,211,154,.14);color:var(--done);
+  display:grid;place-items:center;font-size:.75rem;font-weight:800;margin-top:1px;}
+form{display:flex;flex-direction:column;gap:11px;}
+input[type=email]{
+  width:100%;padding:15px 16px;border-radius:var(--r);border:1px solid var(--border-2);
+  background:var(--surface-2);color:var(--text);font:inherit;font-size:1rem;outline:none;
+}
+input[type=email]::placeholder{color:var(--text-mut);}
+input[type=email]:focus{border-color:var(--accent);box-shadow:0 0 0 4px rgba(110,168,254,.16);}
+button{
+  appearance:none;border:none;cursor:pointer;font:inherit;font-weight:700;font-size:1.02rem;color:#0b0e14;
+  padding:15px 18px;border-radius:var(--r);background:var(--grad);
+  box-shadow:0 8px 24px rgba(139,123,255,.35);transition:transform .15s ease;
+}
+button:hover{transform:translateY(-1px);}
+.micro{color:var(--text-mut);font-size:.8rem;text-align:center;margin:13px 0 0;}
+.trust{margin-top:26px;padding-top:18px;border-top:1px solid var(--border);color:var(--text-mut);font-size:.84rem;}
+.trust b{color:var(--text-dim);}
+.formerr{color:#ff8a8a;font-size:.85rem;margin:11px 0 0;text-align:center;}
+button[disabled]{opacity:.6;cursor:default;transform:none;}
+.success{text-align:center;padding:6px 0 2px;}
+.success-ck{width:48px;height:48px;border-radius:50%;background:rgba(70,211,154,.15);color:var(--done);display:grid;place-items:center;font-size:1.5rem;font-weight:800;margin:0 auto 16px;}
+.success-h{font-size:1.45rem;line-height:1.2;margin:0 0 10px;}
+.success-p{color:var(--text-dim);font-size:.97rem;margin:0;}
+.success-p a{color:var(--accent);font-weight:600;text-decoration:none;}
+.success-p a:hover{text-decoration:underline;}
+</style>
+</head>
+<body>
+  <main class="card">
+    <span class="eyebrow">★ Free kit</span>
+    <h1>Never lose a lead in your inbox again.</h1>
+    <p class="sub">Get the free <b>AI Inbox Manager Setup Kit</b> — set up an AI that reads your inbox and drafts your replies for you, in about 15 minutes. No code, no new software.</p>
+    <ul>
+      <li><span class="ck">✓</span> A copy-paste prompt that triages your inbox and writes the replies</li>
+      <li><span class="ck">✓</span> A fill-in template that makes the drafts sound like <i>you</i></li>
+      <li><span class="ck">✓</span> Simple rules so a real lead never gets buried again</li>
+    </ul>
+
+    <!-- Submits to MailerLite (account 2452097, form 190550622954587986 → group Inbox-Kit) -->
+    <form id="ml-form" novalidate>
+      <input type="email" id="ml-email" name="fields[email]" placeholder="Your best email" required aria-label="Email address" autocomplete="email" />
+      <button type="submit" id="ml-btn">Send me the free kit →</button>
+    </form>
+    <p class="micro" id="ml-micro">No spam. Unsubscribe anytime. You'll also get a few honest build emails from me.</p>
+    <p class="formerr" id="ml-err" role="alert" hidden></p>
+
+    <div id="ml-success" hidden>
+      <div class="success">
+        <div class="success-ck">✓</div>
+        <h2 class="success-h">Check your inbox — your kit is on the way.</h2>
+        <p class="success-p">Give it a minute (peek in spam if needed). Want it right now? <a href="https://gregarious-smell-7e3.notion.site/The-AI-Inbox-Manager-Setup-Kit-38275dd198fe8135a435ec1b00b3b437" target="_blank" rel="noopener">Open the kit here →</a></p>
+      </div>
+    </div>
+
+    <p class="trust"><b>Built by Brook</b> — a real engineer who shows his AI agents actually working. No hype, no fake screenshots.</p>
+  </main>
+
+  <script>
+  (function(){
+    var ENDPOINT='https://assets.mailerlite.com/jsonp/2452097/forms/190550622954587986/subscribe';
+    var form=document.getElementById('ml-form'),
+        email=document.getElementById('ml-email'),
+        btn=document.getElementById('ml-btn'),
+        err=document.getElementById('ml-err');
+    function showSuccess(){
+      ['.sub','ul','#ml-form','#ml-micro','#ml-err'].forEach(function(s){
+        var el=document.querySelector(s); if(el) el.style.display='none';
+      });
+      document.getElementById('ml-success').hidden=false;
+    }
+    form.addEventListener('submit',function(e){
+      e.preventDefault();
+      err.hidden=true;
+      if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email.value)){
+        err.textContent='Please enter a valid email address.'; err.hidden=false; return;
+      }
+      var orig=btn.textContent; btn.disabled=true; btn.textContent='Sending…';
+      var body=new URLSearchParams();
+      body.append('fields[email]',email.value);
+      body.append('ml-submit','1');
+      body.append('anticsrf','true');
+      fetch(ENDPOINT,{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:body.toString()})
+        .then(function(r){return r.json();})
+        .then(function(d){
+          if(d&&d.success){ showSuccess(); return; }
+          var msg='Something went wrong — please try again.';
+          try{ msg=Object.values(d.errors.fields)[0][0]; }catch(_){}
+          err.textContent=msg; err.hidden=false; btn.disabled=false; btn.textContent=orig;
+        })
+        .catch(function(){ showSuccess(); }); // opaque/network: assume queued
+    });
+  })();
+  </script>
+</body>
+</html>
