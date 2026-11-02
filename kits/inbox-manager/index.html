@@ -4,77 +4,117 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Free AI Inbox Manager Setup Kit — Brook</title>
-<!--
-  Optional self-hosted opt-in page (matches the Brook OS design language).
-  Use this ONLY if you want your own page instead of the email tool's built-in one.
-  To make it capture emails: replace FORM_ACTION below with your email tool's
-  form endpoint (MailerLite / Kit / Beehiiv embed action), keep the email input's
-  name as the tool expects (often "fields[email]" or "email"). The tool then runs
-  the 3-email automation. Host free on Netlify / GitHub Pages / Cloudflare Pages.
--->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="icon" type="image/png" href="https://buildwithbrook.com/favicon.png">
 <style>
+/* buildwithbrook.com language: Outfit, Indigo palette, glass card (2026-11) */
 :root{
-  --bg:#0b0e14; --surface:#151b27; --surface-2:#1c2533; --border:#263041; --border-2:#34425a;
-  --text:#e8edf6; --text-dim:#97a3b6; --text-mut:#6b7689;
-  --accent:#6ea8fe; --grad:linear-gradient(135deg,#6ea8fe 0%,#8b7bff 55%,#c084fc 100%);
-  --done:#46d39a; --r:14px; --r-lg:22px;
-  --font:-apple-system,BlinkMacSystemFont,"Segoe UI","Inter",Roboto,Helvetica,Arial,sans-serif;
+  color-scheme:light;
+  --paper:#f8f8fb; --paper-2:#f0f0f6; --card:rgba(255,255,255,.78);
+  --t-strong:rgba(18,18,24,1); --t-body:rgba(18,18,24,.86); --t-muted:rgba(18,18,24,.62); --t-faint:rgba(18,18,24,.48);
+  --line:rgba(18,18,24,.13); --line-soft:rgba(18,18,24,.08);
+  --ember:#3949c4; --ember-ink:#2f3ba3; --on-ember:#fff; --glow:rgba(91,108,224,.16); --err:#b3261e;
+  --shadow:0 1px 0 rgba(255,255,255,.7) inset, 0 24px 60px -30px rgba(20,22,60,.35);
 }
-*{box-sizing:border-box;}
-html,body{margin:0;background:var(--bg);color:var(--text);font-family:var(--font);line-height:1.55;-webkit-font-smoothing:antialiased;}
+@media (prefers-color-scheme: dark){
+  :root{
+    color-scheme:dark;
+    --paper:#08080c; --paper-2:#0d0d13; --card:rgba(22,22,30,.72);
+    --t-strong:rgba(242,243,248,1); --t-body:rgba(242,243,248,.84); --t-muted:rgba(242,243,248,.6); --t-faint:rgba(242,243,248,.44);
+    --line:rgba(242,243,248,.14); --line-soft:rgba(242,243,248,.08);
+    --ember:#5b6ce0; --ember-ink:#9aa5ff; --on-ember:#0b0c18; --glow:rgba(91,108,224,.20); --err:#ff8a80;
+    --shadow:0 1px 0 rgba(255,255,255,.06) inset, 0 30px 70px -30px rgba(0,0,0,.7);
+  }
+}
+*{ box-sizing:border-box; }
+html{ -webkit-text-size-adjust:100%; }
+html,body{ margin:0; }
 body{
-  min-height:100vh; display:grid; place-items:center; padding:32px 18px;
+  min-height:100vh; display:flex; flex-direction:column; color:var(--t-body);
+  font:400 16px/1.6 "Outfit",ui-sans-serif,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+  -webkit-font-smoothing:antialiased; overflow-x:clip;
   background:
-    radial-gradient(900px 520px at 15% -10%, rgba(110,168,254,.14), transparent 60%),
-    radial-gradient(800px 520px at 100% 0%, rgba(192,132,252,.10), transparent 55%),
-    var(--bg);
+    radial-gradient(70vw 46vw at 50% -6%, var(--glow), transparent 68%),
+    radial-gradient(50vw 40vw at 90% 100%, var(--glow), transparent 70%),
+    var(--paper);
 }
+.site-head, .site-foot{ width:100%; max-width:1120px; margin:0 auto; padding:0 clamp(16px,5vw,48px); }
+.site-head{ height:72px; display:flex; align-items:center; justify-content:space-between; }
+.brand{ display:flex; align-items:center; gap:11px; text-decoration:none; color:var(--t-strong); }
+.brand b{ font-size:19px; font-weight:600; letter-spacing:.15em; }
+.brand i{ width:1.3px; height:21px; background:var(--line); display:block; }
+.brand span{ font-size:14px; letter-spacing:.06em; color:var(--t-muted); }
+.site-head .back{ font-size:14px; color:var(--t-muted); text-decoration:none; }
+.site-head .back:hover{ color:var(--t-strong); }
+.page{ flex:1; display:grid; place-items:center; padding:clamp(20px,5vw,56px) 16px clamp(40px,7vw,80px); }
 .card{
-  width:100%; max-width:560px; background:var(--surface);
-  border:1px solid var(--border-2); border-radius:var(--r-lg);
-  padding:38px 36px; box-shadow:0 20px 60px rgba(0,0,0,.45); position:relative; overflow:hidden;
+  width:100%; max-width:580px; position:relative;
+  background:var(--card); border:1px solid var(--line); border-radius:20px;
+  padding:clamp(28px,5vw,44px) clamp(22px,5vw,44px);
+  -webkit-backdrop-filter:blur(18px) saturate(150%); backdrop-filter:blur(18px) saturate(150%);
+  box-shadow:var(--shadow);
 }
-.card::after{content:"";position:absolute;right:-70px;top:-70px;width:240px;height:240px;border-radius:50%;
-  background:radial-gradient(circle,rgba(139,123,255,.22),transparent 70%);}
-.eyebrow{display:inline-flex;align-items:center;gap:8px;font-size:.7rem;font-weight:700;letter-spacing:.16em;
-  text-transform:uppercase;color:var(--accent);background:rgba(110,168,254,.12);
-  border:1px solid var(--border-2);padding:5px 11px;border-radius:999px;}
-h1{font-size:2rem;line-height:1.12;letter-spacing:-.02em;margin:16px 0 12px;}
-.sub{color:var(--text-dim);font-size:1.02rem;margin:0 0 22px;}
-.sub b{color:var(--text);}
-ul{list-style:none;padding:0;margin:0 0 26px;display:grid;gap:11px;}
-li{display:flex;gap:11px;align-items:flex-start;color:var(--text-dim);font-size:.96rem;}
-li .ck{flex:none;width:20px;height:20px;border-radius:6px;background:rgba(70,211,154,.14);color:var(--done);
-  display:grid;place-items:center;font-size:.75rem;font-weight:800;margin-top:1px;}
-form{display:flex;flex-direction:column;gap:11px;}
+.eyebrow{
+  display:inline-flex; align-items:center; gap:9px; font-size:12px; font-weight:600;
+  letter-spacing:.14em; text-transform:uppercase; color:var(--t-muted);
+}
+.eyebrow::before{ content:""; width:7px; height:7px; border-radius:999px; background:var(--ember);
+  box-shadow:0 0 0 3px color-mix(in srgb, var(--ember) 22%, transparent); }
+h1{ margin:18px 0 14px; font-size:clamp(30px,5vw,42px); line-height:1.06; font-weight:400; letter-spacing:-.028em; color:var(--t-strong); }
+.sub{ margin:0 0 24px; font-size:17px; line-height:1.6; color:var(--t-body); font-weight:300; }
+.sub b{ color:var(--t-strong); font-weight:500; }
+ul{ list-style:none; padding:0; margin:0 0 28px; display:grid; gap:12px; border-top:1px solid var(--line-soft); padding-top:20px; }
+li{ display:flex; gap:12px; align-items:flex-start; font-size:15.5px; line-height:1.55; color:var(--t-body); }
+li a{ color:var(--ember-ink); text-decoration:none; }
+li a:hover{ text-decoration:underline; }
+li a b{ font-weight:500; }
+li .ck{ flex:none; width:22px; height:22px; border-radius:999px; display:grid; place-items:center; margin-top:1px;
+  font-size:12px; font-weight:600; color:var(--ember-ink); background:color-mix(in srgb, var(--ember) 13%, transparent); }
+form{ display:flex; flex-direction:column; gap:11px; }
 input[type=email]{
-  width:100%;padding:15px 16px;border-radius:var(--r);border:1px solid var(--border-2);
-  background:var(--surface-2);color:var(--text);font:inherit;font-size:1rem;outline:none;
+  width:100%; padding:15px 18px; border-radius:12px; border:1px solid var(--line);
+  background:var(--paper); color:var(--t-strong); font:inherit; font-size:16px; outline:none;
+  transition:border-color .2s ease, box-shadow .2s ease;
 }
-input[type=email]::placeholder{color:var(--text-mut);}
-input[type=email]:focus{border-color:var(--accent);box-shadow:0 0 0 4px rgba(110,168,254,.16);}
+input[type=email]::placeholder{ color:var(--t-faint); }
+input[type=email]:focus{ border-color:var(--ember); box-shadow:0 0 0 4px color-mix(in srgb, var(--ember) 18%, transparent); }
 button{
-  appearance:none;border:none;cursor:pointer;font:inherit;font-weight:700;font-size:1.02rem;color:#0b0e14;
-  padding:15px 18px;border-radius:var(--r);background:var(--grad);
-  box-shadow:0 8px 24px rgba(139,123,255,.35);transition:transform .15s ease;
+  appearance:none; border:0; cursor:pointer; font:inherit; font-weight:500; font-size:16px; letter-spacing:-.006em;
+  color:var(--on-ember); background:var(--ember); padding:15px 20px; border-radius:999px;
+  box-shadow:0 1px 0 rgba(255,255,255,.25) inset, 0 12px 26px -12px color-mix(in srgb, var(--ember) 70%, transparent);
+  transition:transform .15s ease, filter .2s ease;
 }
-button:hover{transform:translateY(-1px);}
-.micro{color:var(--text-mut);font-size:.8rem;text-align:center;margin:13px 0 0;}
-.trust{margin-top:26px;padding-top:18px;border-top:1px solid var(--border);color:var(--text-mut);font-size:.84rem;}
-.trust b{color:var(--text-dim);}
-.formerr{color:#ff8a8a;font-size:.85rem;margin:11px 0 0;text-align:center;}
-button[disabled]{opacity:.6;cursor:default;transform:none;}
-.success{text-align:center;padding:6px 0 2px;}
-.success-ck{width:48px;height:48px;border-radius:50%;background:rgba(70,211,154,.15);color:var(--done);display:grid;place-items:center;font-size:1.5rem;font-weight:800;margin:0 auto 16px;}
-.success-h{font-size:1.45rem;line-height:1.2;margin:0 0 10px;}
-.success-p{color:var(--text-dim);font-size:.97rem;margin:0;}
-.success-p a{color:var(--accent);font-weight:600;text-decoration:none;}
-.success-p a:hover{text-decoration:underline;}
+button:hover{ transform:translateY(-1px); filter:brightness(1.06); }
+button[disabled]{ opacity:.6; cursor:default; transform:none; }
+.micro{ margin:14px 0 0; text-align:center; font-size:13px; line-height:1.5; color:var(--t-faint); }
+.formerr{ margin:11px 0 0; text-align:center; font-size:14px; color:var(--err); }
+.trust{ margin:28px 0 0; padding-top:18px; border-top:1px solid var(--line-soft); font-size:14px; color:var(--t-muted); }
+.trust b{ color:var(--t-strong); font-weight:500; }
+.trust a{ color:var(--ember-ink); }
+.success{ text-align:center; padding:6px 0 2px; }
+.success-ck{ width:50px; height:50px; border-radius:50%; margin:0 auto 16px; display:grid; place-items:center;
+  font-size:22px; font-weight:600; color:var(--ember-ink); background:color-mix(in srgb, var(--ember) 14%, transparent); }
+.success-h{ margin:0 0 10px; font-size:24px; line-height:1.2; font-weight:400; letter-spacing:-.018em; color:var(--t-strong); }
+.success-p{ margin:0; font-size:15.5px; color:var(--t-body); }
+.success-p a{ color:var(--ember-ink); font-weight:500; text-decoration:none; }
+.success-p a:hover{ text-decoration:underline; }
+.site-foot{ padding-top:24px; padding-bottom:36px; border-top:1px solid var(--line-soft);
+  display:flex; flex-wrap:wrap; gap:8px 20px; justify-content:space-between; font-size:14px; color:var(--t-faint); }
+.site-foot a{ color:var(--t-faint); text-decoration:none; }
+.site-foot a:hover{ color:var(--t-strong); }
+@media (max-width:600px){ .brand span, .brand i{ display:none; } }
 </style>
 </head>
 <body>
+  <header class="site-head">
+    <a class="brand" href="https://buildwithbrook.com/"><b>BROOK</b><i aria-hidden="true"></i><span>AI&nbsp;Systems</span></a>
+    <a class="back" href="https://buildwithbrook.com/">buildwithbrook.com &rarr;</a>
+  </header>
+  <div class="page">
   <main class="card">
-    <span class="eyebrow">★ Free kit</span>
+    <span class="eyebrow">Free kit</span>
     <h1>Never lose a lead in your inbox again.</h1>
     <p class="sub">Get the free <b>AI Inbox Manager Setup Kit</b> — set up an AI that reads your inbox and drafts your replies for you, in about 15 minutes. No code, no new software.</p>
     <ul>
@@ -101,6 +141,11 @@ button[disabled]{opacity:.6;cursor:default;transform:none;}
 
     <p class="trust"><b>Built by Brook</b> — a real engineer who shows his AI agents actually working. No hype, no fake screenshots.</p>
   </main>
+  </div>
+  <footer class="site-foot">
+    <span>&copy; 2026 buildwithbrook.com</span>
+    <span><a href="https://buildwithbrook.com/">Home</a> &middot; <a href="https://systems.buildwithbrook.com/">Free kits</a> &middot; <a href="https://buildwithbrook.com/privacy/">Privacy</a> &middot; <a href="https://buildwithbrook.com/terms/">Terms</a></span>
+  </footer>
 
   <script>
   (function(){
